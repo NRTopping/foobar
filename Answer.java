@@ -8,60 +8,53 @@ public class Answer {
     }
   }
 
-  // X is weight on left side.
   public static String[] answer(int x) { 
-    int carry = 0; // keeps track of what we need to carry to next place
-
+    // convert decimal number to ternary 
     int tern = decToTern(x);
-    String ternString = String.valueOf(tern);
-    char [] ternArray = ternString.toCharArray();
-    // Reverse the array 
-    for (int i = 0; i < ternArray.length / 2; i++) { 
-      char temp = ternArray[i];
-      ternArray[i] = ternArray[ternArray.length - 1 - i];
-      ternArray[ternArray.length - 1 - i] = temp;
-    }
-    
-    for (int i = 0; i < ternArray.length; i++){
-      int temp = Character.getNumericValue(ternArray[i]) + carry;
 
-      // Carry is non-zero, follow these
-      switch(temp) { 
-        case 3: 
-          ternArray[i] = '-'; 
-          carry = 1; 
+    // Convert tern to balanced ternary 
+    String bTern = convertToBalancedTernary(x);
+
+    System.out.println("Ternary:          " + tern);
+    System.out.println("Balanced Ternary: " + bTern);
+
+    // Convert string into array
+    char [] charArray = bTern.toCharArray();
+
+    String [] result = new String [charArray.length];
+
+    for (int i = 0; i < result.length; i++) { 
+      switch(charArray[i]) { 
+        case '-':
+          result[i] = "L";
           break;
-        case 2:
-          ternArray[i] = 'L';
-          carry = 1; 
+        case '+':
+          result[i] = "R";
           break;
-        case 1: 
-          ternArray[i] = 'R';
-          carry = 0; 
+        case '0':
+          result[i] = "-";
           break;
         default:
-          ternArray[i] = '-'; 
-          carry = 0; 
           break;
       }
     }
-    int stringArrayLength = ternArray.length; 
-    if (carry == 1) { 
-      stringArrayLength += 1; 
-    }
-
-    // Copy to string array 
-    String [] result = new String [stringArrayLength];
-    for (int i = 0; i < ternArray.length; i++) { 
-      result[i] = String.valueOf(ternArray[i]);
-    }
-
-    if (result.length > ternArray.length) { 
-      result[result.length - 1] = "R";
-    }
-
-    // 
     return result;
+  }
+
+  private static String convertToBalancedTernary(int x) {
+    if (x == 0) { 
+      return "";
+    }
+
+    int remainder = x % 3; 
+    switch (remainder) { 
+      case 2: 
+        return "-" + convertToBalancedTernary((x+1)/3);
+      case 1: 
+        return "+" + convertToBalancedTernary(x/3);
+      default: 
+        return "0" + convertToBalancedTernary(x/3);
+    }
   }
   
   /*
