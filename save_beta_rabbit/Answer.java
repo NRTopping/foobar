@@ -45,6 +45,11 @@ public class Answer {
     return dfs(0, 0, grid, food);
   } 
 
+  // Algorithm 2. 
+  
+    //Compute food remaining for top row, left column 
+    // Then starting at [1][1] and going row by row, 
+
   // r = row index
   // c = column index
   // grid = grid we are traversing
