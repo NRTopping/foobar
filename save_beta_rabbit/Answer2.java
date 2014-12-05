@@ -1,7 +1,7 @@
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Collections; 
-import java.util.ListIterator;
+import java.util.Iterator;
 
 public class Answer2 { 
   public static void main (String [] args) { 
@@ -71,12 +71,12 @@ public class Answer2 {
     // Init the bottom row and right columns
     for (int i = n - 2; i >= 0; i--) { 
       // Bottom row
-      int prev = fpc[n-1][i+1].getFirst();
+      int prev = fpc[n-1][i+1].iterator().next();
       fpc[n-1][i] = new IntList();
       fpc[n-1][i].add(grid[n-1][i] + prev);
 
       // Right column
-      prev = fpc[i+1][n-1].getFirst();
+      prev = fpc[i+1][n-1].iterator().next();
       fpc[i][n-1] = new IntList();
       fpc[i][n-1].add(grid[i][n-1] + prev);
     }
@@ -99,12 +99,16 @@ public class Answer2 {
           IntList right = fpc[i][j + 1]; 
           IntList below = fpc[i + 1][j];
           right.addAll(below); 
-          ListIterator<Integer> itr = right.listIterator();
-          while (itr.hasNext()) { 
-            Integer currInt = itr.next();
-            itr.set(currInt + grid[i][j]);
+          Iterator<Integer> itr = right.iterator();
+          
+          fpc[i][j] = new IntList();
+          while(itr.hasNext()) { 
+            int curr = itr.next();
+            if (curr + grid[i][j] <= food) { 
+              fpc[i][j].add(curr + grid[i][j]);
+            }
           }
-          fpc[i][j] = right; 
+
         } else { 
           i = n - (tmp - x) - 1; 
           j = (n - 1) - x; 
@@ -113,17 +117,19 @@ public class Answer2 {
             x--;
             continue; // if can't get right or below, continue.
           } 
-
           // otherwise get list from the right and below, join and add to curr.
           IntList right = fpc[i][j + 1]; 
           IntList below = fpc[i + 1][j];
           right.addAll(below); 
-          ListIterator<Integer> itr = right.listIterator();
-          while (itr.hasNext()) { 
-            Integer currInt = itr.next();
-            itr.set(currInt + grid[i][j]);
+          Iterator<Integer> itr = right.iterator();
+          
+          fpc[i][j] = new IntList();
+          while(itr.hasNext()) { 
+            int curr = itr.next();
+            if (curr + grid[i][j] <= food) { 
+              fpc[i][j].add(curr + grid[i][j]);
+            }
           }
-          fpc[i][j] = right; 
         }
         x--;
       }
@@ -131,7 +137,10 @@ public class Answer2 {
     
     // Look at fpc[0][0], find largest value less than or eqaul to food, return
     // difference
-    ListIterator<Integer> itr = fpc[0][0].listIterator();
+    Iterator<Integer> itr = fpc[0][0].iterator();
+    if (!itr.hasNext()) {
+        return -1;
+    }
     int dif = food - itr.next();
     
     while (itr.hasNext()) {
@@ -145,5 +154,5 @@ public class Answer2 {
   }
 
   // This is to get past Java Array Generic exception
-  private static class IntList extends LinkedList<Integer> {}
+  private static class IntList extends HashSet<Integer> {}
 }
